@@ -1,8 +1,8 @@
 import type { Charge } from '../resources/charge'
 import type {
   SubmitCustomerCardDetailsResponse,
-  SubmitCustomerPaymentOtpResponse,
-  ResendCustomerPaymentOtpResponse,
+  SubmitCustomerCardOtpResponse,
+  ResendCustomerOtpResponse,
   FetchCheckoutTransactionDetailsResponse,
   CancelCheckoutTransactionResponse,
 } from '../types/models'
@@ -14,7 +14,7 @@ export const RESPONSE_CODE_3DS_REQUIRED = 'S0'
 export interface CardPaymentStep {
   raw:
     | SubmitCustomerCardDetailsResponse
-    | SubmitCustomerPaymentOtpResponse
+    | SubmitCustomerCardOtpResponse
     | Record<string, unknown>
   responseCode: string | null
   status: unknown
@@ -27,7 +27,7 @@ export interface CardPaymentStep {
 }
 
 function interpret(
-  raw: SubmitCustomerCardDetailsResponse | SubmitCustomerPaymentOtpResponse,
+  raw: SubmitCustomerCardDetailsResponse | SubmitCustomerCardOtpResponse,
   transactionIdFallback: string | null = null
 ): CardPaymentStep {
   const data = raw.data && typeof raw.data === 'object' ? raw.data : raw
@@ -84,7 +84,7 @@ export class CardPaymentFlow {
       )
     }
 
-    const raw = await this.charge.submitCustomerPaymentOtp({
+    const raw = await this.charge.submitCustomerCardOtp({
       otp,
       orderReference: this.orderReference,
       transactionId: this.transactionId,
@@ -93,8 +93,8 @@ export class CardPaymentFlow {
     return interpret(raw, this.transactionId)
   }
 
-  async resendOtp(): Promise<ResendCustomerPaymentOtpResponse> {
-    return this.charge.resendCustomerPaymentOtp({ orderReference: this.orderReference })
+  async resendOtp(): Promise<ResendCustomerOtpResponse> {
+    return this.charge.resendCustomerOtp({ orderReference: this.orderReference })
   }
 
   async confirm(): Promise<FetchCheckoutTransactionDetailsResponse> {

@@ -13,6 +13,9 @@ import type {
   AuthorizeExchangeRequest,
   AuthorizeExchangeResponse,
   FetchGlobalPayoutTransactionResponse,
+  GlobalPayoutAccount,
+  FetchGlobalPayoutAccountsResponse,
+  FetchGlobalPayoutAccountResponse,
 } from '../types/models'
 
 export class GlobalPayout {
@@ -51,5 +54,15 @@ export class GlobalPayout {
 
   async listInstitutionProviders(isMobileMoney?: string, countryIsoCode?: string): Promise<ListInstitutionProvidersResponse> {
     return this.client.get('/v1/global-payout/bank/providers', { isMobileMoney, countryIsoCode } as unknown as Record<string, unknown>)
+  }
+
+  async fetchGlobalPayoutAccounts(useSandbox = false): Promise<FetchGlobalPayoutAccountsResponse> {
+    const path = useSandbox ? '/v1/sandbox/global-payout/accounts' : '/v1/global-payout/accounts'
+    return this.client.get(path)
+  }
+
+  async fetchGlobalPayoutAccount(accountId: string, useSandbox = false): Promise<FetchGlobalPayoutAccountResponse> {
+    const path = useSandbox ? `/v1/sandbox/global-payout/accounts/${accountId}` : `/v1/global-payout/accounts/${accountId}`
+    return this.client.get(path)
   }
 }

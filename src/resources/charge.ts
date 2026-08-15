@@ -3,10 +3,10 @@ import { validateBody } from '../utils/validation'
 import type {
   SubmitCustomerCardDetailsRequest,
   SubmitCustomerCardDetailsResponse,
-  SubmitCustomerPaymentOtpRequest,
-  SubmitCustomerPaymentOtpResponse,
-  ResendCustomerPaymentOtpRequest,
-  ResendCustomerPaymentOtpResponse,
+  SubmitCustomerCardOtpRequest,
+  SubmitCustomerCardOtpResponse,
+  ResendCustomerOtpRequest,
+  ResendCustomerOtpResponse,
   FetchCheckoutTransactionDetailsResponse,
   CancelCheckoutTransactionRequest,
   CancelCheckoutTransactionResponse,
@@ -20,22 +20,25 @@ export class Charge {
   }
 
   async submitCustomerCardDetails(request: SubmitCustomerCardDetailsRequest): Promise<SubmitCustomerCardDetailsResponse> {
-    validateBody('post', '/v1/charge/card', request as unknown as Record<string, unknown>)
-    return this.client.post('/v1/charge/card', request as unknown as Record<string, unknown>)
+    validateBody('post', '/v1/checkout/checkout-card-detail', request as unknown as Record<string, unknown>)
+    return this.client.post('/v1/checkout/checkout-card-detail', request as unknown as Record<string, unknown>)
   }
 
-  async submitCustomerPaymentOtp(request: SubmitCustomerPaymentOtpRequest): Promise<SubmitCustomerPaymentOtpResponse> {
-    validateBody('post', '/v1/charge/otp', request as unknown as Record<string, unknown>)
-    return this.client.post('/v1/charge/otp', request as unknown as Record<string, unknown>)
+  async submitCustomerCardOtp(request: SubmitCustomerCardOtpRequest): Promise<SubmitCustomerCardOtpResponse> {
+    validateBody('post', '/v1/checkout/checkout-card-otp', request as unknown as Record<string, unknown>)
+    return this.client.post('/v1/checkout/checkout-card-otp', request as unknown as Record<string, unknown>)
   }
 
-  async resendCustomerPaymentOtp(request: ResendCustomerPaymentOtpRequest): Promise<ResendCustomerPaymentOtpResponse> {
-    validateBody('post', '/v1/charge/otp/resend', request as unknown as Record<string, unknown>)
-    return this.client.post('/v1/charge/otp/resend', request as unknown as Record<string, unknown>)
+  async resendCustomerOtp(request: ResendCustomerOtpRequest): Promise<ResendCustomerOtpResponse> {
+    validateBody('post', '/v1/checkout/resend-otp', request as unknown as Record<string, unknown>)
+    return this.client.post('/v1/checkout/resend-otp', request as unknown as Record<string, unknown>)
   }
 
-  async fetchCheckoutTransactionDetails(orderReference: string): Promise<FetchCheckoutTransactionDetailsResponse> {
-    return this.client.get('/v1/checkout/transaction', { orderReference } as unknown as Record<string, unknown>)
+  async fetchCheckoutTransactionDetails(
+    orderReference: string
+  ): Promise<FetchCheckoutTransactionDetailsResponse> {
+    validateBody('post', '/v1/checkout/confirm-transaction-receipt', { orderReference } as unknown as Record<string, unknown>)
+    return this.client.post('/v1/checkout/confirm-transaction-receipt', { orderReference } as unknown as Record<string, unknown>)
   }
 
   async cancelCheckoutTransaction(request: CancelCheckoutTransactionRequest): Promise<CancelCheckoutTransactionResponse> {

@@ -24,11 +24,10 @@ export class GlobalCollections {
     return this.client.get(`/v1/global-collection/transactions/${transactionId}`)
   }
 
-  async fetchDrcInflowProviders(): Promise<FetchDrcInflowProvidersResponse> {
-    return this.client.get('/v1/global-collection/drc/inflow/providers')
-  }
-
-  async fetchDrcInflowProvidersSandbox(): Promise<FetchDrcInflowProvidersResponse> {
-    return this.client.get('/v1/sandbox/global-collection/drc/inflow/providers')
+  async fetchDrcInflowProviders(useSandbox = false): Promise<FetchDrcInflowProvidersResponse> {
+    const path = useSandbox
+      ? '/v1/sandbox/global-collection/drc/inflow/providers'
+      : '/v1/global-collection/drc/inflow/providers'
+    return this.client.get(path)
   }
 }

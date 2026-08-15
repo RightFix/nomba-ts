@@ -68,7 +68,7 @@ export class NombaClient {
       config.headers.set('Authorization', `Bearer ${token}`)
 
       if (this.accountId) {
-        config.headers.set('X-Account-Id', this.accountId)
+        config.headers.set('accountId', this.accountId)
       }
 
       return config
@@ -149,7 +149,7 @@ export class NombaClient {
 
     try {
       const response = await axios.post<TokenResponse>(
-        `${this.axios.defaults.baseURL}/v1/auth/token`,
+        `${this.axios.defaults.baseURL}/v1/auth/token/issue`,
         new URLSearchParams({ grant_type: 'client_credentials' }),
         {
           headers: {

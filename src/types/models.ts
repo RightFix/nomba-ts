@@ -28,8 +28,6 @@ export interface ListAllAccountsResponse extends NombaResponse<{
   accounts: Account[]
 }> {}
 
-export interface FetchAccountDetailsResponse extends NombaResponse<Account> {}
-
 export interface FetchTerminalsAssignedToAccountResponse extends NombaResponse<{
   terminals: Terminal[]
 }> {}
@@ -77,12 +75,6 @@ export interface CreateOnlineCheckoutOrderRequest {
   expiresAt?: string
 }
 
-export interface CreateOnlineCheckoutOrderResponse extends NombaResponse<{
-  orderReference: string
-  checkoutUrl: string
-  expiresAt: string
-}> {}
-
 export interface FetchCheckoutOrderResponse extends NombaResponse<{
   orderReference: string
   amount: string
@@ -112,11 +104,6 @@ export interface FetchCheckoutTransactionDetailsResponse extends NombaResponse<{
   createdAt: string
 }> {}
 
-export interface CancelCheckoutTransactionResponse extends NombaResponse<{
-  transactionId: string
-  status: string
-}> {}
-
 // Charge models
 export interface SubmitCustomerCardDetailsRequest {
   cardDetails: string
@@ -133,100 +120,6 @@ export interface SubmitCustomerCardDetailsResponse extends NombaResponse<{
   transactionId?: string
   secureAuthenticationData?: Record<string, unknown>
 }> {}
-
-export interface SubmitCustomerPaymentOtpRequest {
-  otp: string
-  orderReference: string
-  transactionId: string
-}
-
-export interface SubmitCustomerPaymentOtpResponse extends NombaResponse<{
-  responseCode: string
-  status: string
-  message?: string
-  transactionId?: string
-}> {}
-
-export interface ResendCustomerPaymentOtpRequest {
-  orderReference: string
-}
-
-export interface ResendCustomerPaymentOtpResponse extends NombaResponse<{
-  message: string
-}> {}
-
-export interface FetchCheckoutTransactionDetailsResponse extends NombaResponse<{
-  transactionId: string
-  orderReference: string
-  amount: string
-  currency: string
-  status: string
-  paymentMethod: string
-  customerEmail: string
-  customerName: string
-  paidAt?: string
-  createdAt: string
-}> {}
-
-export interface CancelCheckoutTransactionRequest {
-  transactionId: string
-  forceCancel?: boolean
-}
-
-export interface CancelCheckoutTransactionResponse extends NombaResponse<{
-  transactionId: string
-  status: string
-}> {}
-
-// Transfers models
-export interface TransferRequest {
-  amount: string
-  accountNumber: string
-  bankCode: string
-  accountName: string
-  narration: string
-  reference: string
-  currency?: string
-  feeBearer?: string
-}
-
-export interface TransferResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  fee: string
-  currency: string
-  createdAt: string
-}> {}
-
-export interface BulkTransferRequest {
-  transfers: TransferRequest[]
-}
-
-export interface BulkTransferResponse extends NombaResponse<{
-  batchReference: string
-  totalAmount: string
-  totalFee: string
-  status: string
-  transfers: TransferResponse['data'][]
-}> {}
-
-export interface FetchTransferResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  fee: string
-  currency: string
-  accountNumber: string
-  bankCode: string
-  accountName: string
-  narration: string
-  createdAt: string
-}> {}
-
-export interface FetchTransfersResponse extends NombaResponse<PaginatedResponse<FetchTransferResponse['data']>> {}
 
 // Transactions models
 export interface Transaction {
@@ -282,11 +175,8 @@ export interface ConfirmTransactionStatusResponse extends NombaResponse<{
 
 // Airtime/Data models
 export interface DataPlan {
-  code: string
-  name: string
-  amount: string
-  validity: string
-  network: string
+  amount: number
+  plan: string
 }
 
 export interface FetchDataPlansResponse extends NombaResponse<DataPlan[]> {}
@@ -693,3 +583,426 @@ export interface FetchGlobalPayoutTransactionResponse extends NombaResponse<{
   createdAt: string
   completedAt?: string
 }> {}
+
+// Extended Account models
+export interface AccountDetails {
+  createdAt: string
+  accountId: string
+  accountHolderId: string
+  accountRef: string
+  bvn: string
+  status: string
+  type: string
+  accountName: string
+  currency: string
+  banks: Array<{
+    bankAccountNumber: string
+    bankName: string
+    bankAccountName: string
+  }>
+}
+
+export interface FetchAccountDetailsResponse extends NombaResponse<AccountDetails> {}
+
+export interface FetchAccountBalanceResponse extends NombaResponse<{
+  amount: string
+  currency: string
+  timeCreated: string
+}> {}
+
+export interface CreateSubAccountResponse extends NombaResponse<{
+  accountId: string
+  accountRef: string
+  accountName: string
+  status: string
+  currency: string
+  createdAt: string
+}> {}
+
+export interface SuspendAccountResponse extends NombaResponse<{
+  accountId: string
+  status: string
+}> {}
+
+export interface ReactivateAccountResponse extends NombaResponse<{
+  accountId: string
+  status: string
+}> {}
+
+export interface UpdateAccountAccessResponse extends NombaResponse<{
+  accountId: string
+  canLogin: boolean
+  canViewBalance: boolean
+  canViewTransactions: boolean
+  canInitiateTransfers: boolean
+  canManageTerminals: boolean
+  canManageVirtualAccounts: boolean
+  canManageWebhooks: boolean
+  canManageSubAccounts: boolean
+}> {}
+
+// Extended Virtual Account models
+export interface UpdateVirtualAccountRequest {
+  newAccountRef?: string
+  accountName?: string
+  expectedAmount?: number
+  callbackUrl?: string
+}
+
+export interface FilterVirtualAccountsRequest {
+  accountName?: string
+  accountRef?: string
+  bvn?: string
+  bankAccountNumber?: string
+  dateCreatedFrom?: string
+  dateCreatedTo?: string
+  expired?: boolean
+  resourceAcquired?: boolean
+  limit?: string
+  cursor?: string
+}
+
+export interface FilterVirtualAccountsResponse extends NombaResponse<PaginatedResponse<VirtualAccount>> {}
+
+export interface ExpireVirtualAccountResponse extends NombaResponse<{
+  identifier: string
+  expired: boolean
+}> {}
+
+// Extended Checkout models
+export interface CreateOnlineCheckoutOrderRequest {
+  order: {
+    orderReference: string
+    customerId: string
+    callbackUrl: string
+    customerEmail: string
+    amount: number
+    currency: string
+    accountId?: string
+    allowedPaymentMethods?: string[]
+    splitRequest?: {
+      splitType: 'PERCENTAGE' | 'AMOUNT'
+      splitList: Array<{
+        accountId: string
+        value: number
+      }>
+    }
+    orderMetaData?: Record<string, string>
+  }
+  tokenizeCard: boolean
+}
+
+export interface CreateOnlineCheckoutOrderResponse extends NombaResponse<{
+  checkoutLink: string
+  orderReference: string
+}> {}
+
+export interface FetchCheckoutOrderResponse extends NombaResponse<{
+  orderReference: string
+  amount: string
+  currency: string
+  customerEmail: string
+  customerName: string
+  redirectUrl: string
+  paymentMethods: string[]
+  status: string
+  metadata?: Record<string, unknown>
+  description?: string
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}> {}
+
+export interface ChargeTokenizedCardRequest {
+  orderReference: string
+  amount: number
+  currency: string
+  cardToken: string
+  customerEmail: string
+  customerName: string
+}
+
+export interface ChargeTokenizedCardResponse extends NombaResponse<{
+  transactionId: string
+  orderReference: string
+  amount: string
+  currency: string
+  status: string
+  paymentMethod: string
+  customerEmail: string
+  customerName: string
+  paidAt?: string
+  createdAt: string
+}> {}
+
+export interface TokenizedCard {
+  cardToken: string
+  cardPan: string
+  cardType: string
+  cardBank: string
+  cardCurrency: string
+  customerEmail: string
+  createdAt: string
+}
+
+export interface ListTokenizedCardsResponse extends NombaResponse<TokenizedCard[]> {}
+
+export interface UpdateTokenizedCardRequest {
+  cardToken: string
+  cardPan?: string
+  cardExpiry?: string
+}
+
+export interface UpdateTokenizedCardResponse extends NombaResponse<TokenizedCard> {}
+
+export interface DeleteTokenizedCardRequest {
+  cardToken: string
+}
+
+export interface DeleteTokenizedCardResponse extends NombaResponse<{
+  deleted: boolean
+}> {}
+
+export interface RefundCheckoutRequest {
+  transactionId: string
+  amount?: number
+  reason?: string
+}
+
+export interface RefundCheckoutResponse extends NombaResponse<{
+  transactionId: string
+  status: string
+  refundId: string
+}> {}
+
+export interface CancelCheckoutOrderRequest {
+  orderReference: string
+  reason?: string
+}
+
+export interface CancelCheckoutOrderResponse extends NombaResponse<{
+  orderReference: string
+  status: string
+}> {}
+
+// Charge models
+export interface SubmitCustomerCardDetailsRequest {
+  cardDetails: string
+  key: string
+  orderReference: string
+  saveCard?: boolean
+  deviceInformation?: Record<string, unknown>
+}
+
+export interface SubmitCustomerCardDetailsResponse extends NombaResponse<{
+  responseCode: string
+  status: string
+  message?: string
+  transactionId?: string
+  secureAuthenticationData?: Record<string, unknown>
+}> {}
+
+export interface SubmitCustomerCardOtpRequest {
+  otp: string
+  orderReference: string
+  transactionId: string
+}
+
+export interface SubmitCustomerCardOtpResponse extends NombaResponse<{
+  responseCode: string
+  status: string
+  message?: string
+  transactionId?: string
+}> {}
+
+export interface ResendCustomerOtpRequest {
+  orderReference: string
+}
+
+export interface ResendCustomerOtpResponse extends NombaResponse<{
+  message: string
+}> {}
+
+export interface FetchCheckoutFlashAccountResponse extends NombaResponse<{
+  accountNumber: string
+  bankName: string
+  accountName: string
+  expiresAt: string
+}> {}
+
+export interface RequestOtpBeforeSavingCardRequest {
+  orderReference: string
+  phoneNumber: string
+}
+
+export interface RequestOtpBeforeSavingCardResponse extends NombaResponse<{
+  message: string
+}> {}
+
+export interface RequestOtpForSavedCardsRequest {
+  orderReference: string
+  email: string
+}
+
+export interface RequestOtpForSavedCardsResponse extends NombaResponse<{
+  message: string
+}> {}
+
+export interface SubmitUserOtpRequest {
+  otp: string
+  orderReference: string
+  phoneNumber: string
+}
+
+export interface SubmitUserOtpResponse extends NombaResponse<{
+  message: string
+}> {}
+
+export interface GetUserSavedCardsResponse extends NombaResponse<TokenizedCard[]> {}
+
+export interface FetchCheckoutTransactionDetailsResponse extends NombaResponse<{
+  transactionId: string
+  orderReference: string
+  amount: string
+  currency: string
+  status: string
+  paymentMethod: string
+  customerEmail: string
+  customerName: string
+  paidAt?: string
+  createdAt: string
+}> {}
+
+export interface CancelCheckoutTransactionRequest {
+  transactionId: string
+  forceCancel?: boolean
+}
+
+export interface CancelCheckoutTransactionResponse extends NombaResponse<{
+  transactionId: string
+  status: string
+}> {}
+
+// Extended Transfers models
+export interface Bank {
+  code: string
+  name: string
+  nipCode: string | null
+  logo: string
+}
+
+export interface FetchBankCodesResponse extends NombaResponse<Bank[]> {}
+
+export interface BankAccountLookupRequest {
+  accountNumber: string
+  bankCode: string
+}
+
+export interface BankAccountLookupResponse extends NombaResponse<{
+  accountNumber: string
+  accountName: string
+}> {}
+
+export interface BankTransferRequest {
+  amount: number
+  accountNumber: string
+  bankCode: string
+  accountName: string
+  merchantTxRef: string
+  senderName?: string
+  narration?: string
+}
+
+export interface BankTransferResponse extends NombaResponse<{
+  amount: string
+  source: string
+  sourceUserId: string
+  customerBillerId: string
+  productId: string
+  meta: Record<string, unknown>
+  fee: number
+  timeCreated: string
+  id: string
+  type: string
+  status: string
+}> {}
+
+export interface WalletTransferRequest {
+  amount: number
+  accountId: string
+  receiverAccountId: string
+  merchantTxRef: string
+  narration: string
+}
+
+export interface WalletTransferResponse extends NombaResponse<{
+  transactionId: string
+  reference: string
+  status: string
+  amount: string
+  fee: string
+  currency: string
+  createdAt: string
+}> {}
+
+// Terminal models
+export interface AssignTerminalRequest {
+  serialNumber: string
+  terminalLabel?: string
+}
+
+export interface AssignTerminalResponse extends NombaResponse<{
+  terminalId: string
+  serialNumber: string
+  accountId: string
+  parentAccountId: string
+  merchantName: string
+  terminalLabel: string
+  createdAt: string
+  updatedAt: string
+}> {}
+
+export interface UnassignTerminalRequest {
+  serialNumber: string
+  terminalLabel?: string
+}
+
+export interface UnassignTerminalResponse extends NombaResponse<{
+  terminalId: string
+  serialNumber: string
+  accountId: string
+  parentAccountId: string
+  merchantName: string
+  terminalLabel: string
+  createdAt: string
+  updatedAt: string
+}> {}
+
+export interface TerminalPaymentRequest {
+  merchantTxRef: string
+  amount: number
+  currency: string
+}
+
+export interface TerminalPaymentResponse extends NombaResponse<{
+  paymentId: string
+  status: string
+  amount: number
+  currency: string
+  createdAt: string
+}> {}
+
+// Global Payout extended models
+export interface GlobalPayoutAccount {
+  accountId: string
+  currency: string
+  balance: string
+  accountName: string
+  accountType: string
+  status: string
+  createdAt: string
+}
+
+export interface FetchGlobalPayoutAccountsResponse extends NombaResponse<GlobalPayoutAccount[]> {}
+
+export interface FetchGlobalPayoutAccountResponse extends NombaResponse<GlobalPayoutAccount> {}
