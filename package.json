@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Unofficial TypeScript SDK for the Nomba payments API",
   "license": "MIT",
-  "author": "Righteousness <righteousness@example.com>",
+  "author": "Righteousness <righteousnessude@gmail.com>",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -41,17 +41,18 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/righteousness/nomba-ts.git"
+    "url": "https://github.com/RightFix/nomba-ts.git"
   },
   "bugs": {
-    "url": "https://github.com/righteousness/nomba-ts/issues"
+    "url": "https://github.com/RightFix/nomba-ts/issues"
   },
-  "homepage": "https://nomba-ts.vercel.app",
+  "homepage": "https://rightfix.github.io/nomba-docs-ts/",
   "dependencies": {
-    "axios": "^1.7.2"
+    "axios": "^1.7.2",
+    "https": "^1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.19.43",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vitest": "^2.0.0"
