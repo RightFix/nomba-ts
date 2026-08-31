@@ -1,21 +1,98 @@
-MIT License
+GNU AFFERO GENERAL PUBLIC LICENSE
+   Version 3, 19 November 2007
 
-Copyright (c) 2026 Righteousness
+Copyright (C) 2026 Free Software Foundation, Inc. <https://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+                            Preamble
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The GNU Affero General Public License is a free, copyleft license for
+software and other works, specifically designed to ensure cooperation
+with the community in the case of network server use.  The license is
+affero (AGPL) copyleft version of the GPL.  The AGPL was written for
+authors who want to make sure that when users run modified versions of
+the software on a server, those users also get the source code.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+Developers that use our General Public Licenses protect your rights
+with two steps: (1) assert copyright on the software, and (2) offer
+you this License which gives you legal permission to copy, distribute
+and/or modify the software.
+
+A license is "copyleft" when the derivative works of that license must
+also be available under the same license.  The GNU General Public License
+is copyleft; the GNU Lesser General Public License (LGPL) is less
+copyleft.  What's more, the AGPL ensures that the source code for a
+modified version of the software is made available to the users of that
+version, not just to the people who received the software directly from
+you.
+
+The precise terms and conditions for copying, distribution and
+modification follow.
+
+                    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+                    0. Definitions.
+
+" This License" refers to version 3 of the GNU Affero General Public License.
+
+"Copyright" also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+"A "License" means this GNU Affero General Public License.
+
+"the "Program" refers to any software or other work licensed under
+these terms.  Each licensee is addressed as "you".  "To "receive" a
+work is to receive as its contained in a physical medium or to receive
+it electronically.
+
+" Source Code" for a work means the preferred form of the work for
+making modifications to it.  "Object code" means any non-source
+form of the work.
+
+A "Work that uses the Library" is a work that is based on the Library
+or that is derived from the Library, where the work is not a separate
+work that is merely linked to the Library.  For the purposes of this
+License, a work that uses the Library is not a separate work if it
+either uses the Library's public API by being generated from the
+Library's headers, or it is a work that is a derivative work of the
+Library.
+
+" a covered work" means either the unmodified Program or a work based
+on the Program.
+
+" Propagate" a work means to do anything with it that would make you
+directly or indirectly liable for infringement under applicable copyright
+law, except executing it on a computer or modifying a private copy.  It
+includes copying, distribution (with or for a profit), making available
+to the public, and in some countries other activities as well.
+
+" Mere aggregation" of a work based on the Library with other separate
+works on a volume of a storage or distribution medium is not as such a
+propagation of the other works.
+
+" User" if the running of the Program is on a server, the meaning of
+"User" is the remote user executing the Program on the server, not the
+operator of the server.
+
+" User Product" means either (1) a consumer product, which means any
+tangible personal property which is normally used for personal, family,
+or household purposes, or (2) anything designed for incorporation into
+a consumer product.
+
+" Installation Information" for a User Product means any methods, 
+procedures, authorization keys, or other information required to install 
+and execute modified versions of a covered work in that User Product from 
+its modified form.  The requirement to provide Installation Information 
+does not include a requirement to provide support service, warranty, or 
+update assistance.
+
+" Running" includes but is not limited to loading or installing, 
+explicit formatting"

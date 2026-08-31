@@ -1,5 +1,7 @@
 # nomba-ts
 
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+
 Unofficial TypeScript SDK for the [Nomba](https://developer.nomba.com) payments API.
 
 Covers **every endpoint** in Nomba's official OpenAPI spec — 86 methods across 14 resource groups. Built with `axios`, async/await, and TypeScript declarations — no endpoint URLs to memorize, no manual token handling, no guessing field names.

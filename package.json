@@ -2,7 +2,7 @@
   "name": "nomba-ts",
   "version": "1.0.0",
   "description": "Unofficial TypeScript SDK for the Nomba payments API",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "author": "Righteousness <righteousnessude@gmail.com>",
   "type": "module",
   "main": "dist/index.js",
