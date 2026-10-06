@@ -34,7 +34,7 @@ const account = await nomba.virtualAccounts.createVirtualAccount({
 
 ## Authentication
 
-The SDK handles the OAuth2 client-credentials flow automatically: it fetches an access token on first request, caches it, and refreshes it transparently when it expires or is rejected (a 401 triggers exactly one retry with a fresh token). Get your `apiKey` / `apiSecret` / `accountId` from your Nomba dashboard under **Webhook & API Keys**.
+The SDK handles the OAuth2 client-credentials flow automatically per the Nomba docs: it `POST`s JSON `{ grant_type: 'client_credentials', client_id, client_secret }` to `/v1/auth/token/issue` (with your `accountId` header), caches the returned `access_token`, and refreshes transparently via `/v1/auth/token/refresh` before the 30-minute expiry (5-minute buffer). A `401` clears the cached token and throws `NombaAuthError` immediately — it is never silently retried. Get your `apiKey` / `apiSecret` / `accountId` from your Nomba dashboard under **Webhook & API Keys**.
 
 ```typescript
 new Nomba({
@@ -49,6 +49,8 @@ new Nomba({
 })
 ```
 
+You can also refresh or revoke tokens manually via the underlying client (`refreshAccessToken()` / `revokeAccessToken()`).
+
 ## Resource groups
 
 Each group is available on the `Nomba` instance:
@@ -57,11 +59,11 @@ Each group is available on the `Nomba` instance:
 |---------------------|----------|
 | `accounts`           | `listAllAccounts`, `fetchAccountDetails`, `fetchTerminalsAssignedToAccount` |
 | `virtualAccounts`    | `createVirtualAccount`, `fetchVirtualAccount`, `filterVirtualAccounts` |
-| `checkout`           | `createOnlineCheckoutOrder`, `fetchCheckoutOrder`, `fetchCheckoutTransactionDetails` |
-| `charge`             | `submitCustomerCardDetails`, `submitCustomerPaymentOtp`, `fetchCheckoutTransactionDetails` |
+| `checkout`           | `createOnlineCheckoutOrder`, `fetchCheckoutOrder`, `fetchCheckoutTransactionDetails` (production-only rich details) |
+| `charge`             | `submitCustomerCardDetails`, `submitCustomerPaymentOtp`, `confirmTransactionReceipt` |
 | `transfers`          | `transfer`, `bulkTransfer`, `fetchTransfer`, `fetchTransfers` |
 | `terminals`          | `fetchTerminals`, `fetchTerminalDetails` |
-| `transactions`       | `fetchCreditDebitTransactionsOnParentAccount`, `filterParentAccountTransactions`, `confirmTransactionStatus` |
+| `transactions`       | `fetchCreditDebitTransactionsOnParentAccount`, `filterParentAccountTransactions`, `fetchSingleTransactionOnParentAccount` (sandbox+prod verify), `confirmTransactionStatus` |
 | `airtimeData`        | `makeAirtimePurchaseViaParentAccount`, `vendDataViaParentAccount`, `fetchDataPlans` |
 | `cableTv`            | `cableTvLookup`, `cableTvSubscriptionViaParentAccount` |
 | `electricity`        | `fetchElectricityProviders`, `electricityCustomerLookup`, `vendElectricityViaParentAccount` |
@@ -72,7 +74,9 @@ Each group is available on the `Nomba` instance:
 
 ## Reliability (token locking + retry/backoff)
 
-The `NombaClient` guards token fetching with a lock, so concurrent requests never race to re-fetch a token — only one fetch happens, the rest wait and reuse it. Requests that hit a `429` or transient `5xx` are automatically retried with exponential backoff (respecting `Retry-After` if Nomba sends one):
+The `NombaClient` guards token fetching with a lock, so concurrent requests never race to re-fetch a token — only one fetch happens, the rest wait and reuse it. Requests that hit a `429` or transient `5xx`/network error are automatically retried with exponential backoff (respecting `Retry-After` if Nomba sends one). `401`s are not retried: the token cache is cleared and a `NombaAuthError` is thrown.
+
+Every response envelope is also checked: only `code` `00`/`200`/`201` counts as success (per Nomba's Response Codes page). Any other `code` on HTTP 2xx throws `NombaAPIError` with the gateway `description` in the message, so `code: '01'` never looks like success.
 
 ```typescript
 const nomba = new Nomba({
@@ -106,7 +110,7 @@ try {
 
 ## Webhook signature verification
 
-Implements Nomba's documented HMAC-SHA256 scheme (`nomba-signature` / `nomba-timestamp` headers, base64-encoded signature), including replay protection via the timestamp:
+Implements Nomba's documented HMAC-SHA256 scheme (`nomba-signature` / `nomba-sig-value` alias / `nomba-timestamp` headers, base64-encoded signature over `event_type:requestId:userId:walletId:transactionId:type:time:responseCode:timestamp`), including replay protection via the timestamp:
 
 ```typescript
 import { verifyWebhookRequest, NombaValidationError } from 'nomba-ts'
@@ -175,7 +179,9 @@ if (step.completed) {
 }
 ```
 
-`flow` is a `CardPaymentFlow` and `step` is a `CardPaymentStep` with `.completed`, `.requiresOtp`, `.requires3ds`, `.transactionId`, `.message`, etc.
+`flow` is a `CardPaymentFlow` and `step` is a `CardPaymentStep` with `.completed`, `.requiresOtp`, `.requires3ds`, `.transactionId`, `.message`, etc. `responseCode` `00` = success, `T0` = OTP required, `S0`/`SO` = 3D Secure (both spellings appear in Nomba's spec, both are accepted).
+
+Verify before delivering value: for sandbox + production use `transactions.fetchSingleTransactionOnParentAccount({ orderReference })` and check `data.status === 'SUCCESS'`; for production-only rich details use `checkout.fetchCheckoutTransactionDetails({ idType: 'ORDER_REFERENCE', id })` and check `transactionDetails.status === 'PAYMENT SUCCESSFUL'`. `charge.confirmTransactionReceipt(orderReference)` confirms after OTP/transfer within the charge flow.
 
 ## Error handling
 

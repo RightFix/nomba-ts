@@ -78,6 +78,12 @@ export function checkTimestampFreshness(
   }
 }
 
+function normalizeResponseCode(value: unknown): string {
+  if (value == null) return ''
+  const text = String(value)
+  return text === 'null' ? '' : text
+}
+
 export function computeSignature(
   signatureKey: string,
   payload: WebhookPayload,
@@ -91,7 +97,9 @@ export function computeSignature(
     getPath(payload, 'data', 'transaction', 'transactionId'),
     getPath(payload, 'data', 'transaction', 'type'),
     getPath(payload, 'data', 'transaction', 'time'),
-    getPath(payload, 'data', 'transaction', 'responseCode'),
+    normalizeResponseCode(
+      (payload as { data?: { transaction?: { responseCode?: unknown } } }).data?.transaction?.responseCode
+    ),
   ].join(':')
 
   const message = `${hashingPayload}:${timestamp}`
@@ -109,6 +117,9 @@ export function verifyWebhookSignature(
   const expected = computeSignature(signatureKey, payload, timestamp)
   const expectedBuffer = Buffer.from(expected)
   const signatureBuffer = Buffer.from(signature)
+  // timingSafeEqual throws on length mismatch, so compare lengths first
+  // and fall through to a constant-time-shaped false instead of throwing.
+  if (expectedBuffer.length !== signatureBuffer.length) return false
   return timingSafeEqual(expectedBuffer, signatureBuffer)
 }
 
@@ -127,12 +138,12 @@ export function verifyWebhookRequest(
     lowerHeaders[key.toLowerCase()] = value
   }
 
-  const signature = lowerHeaders[SIGNATURE_HEADER.toLowerCase()]
+  const signature = lowerHeaders[SIGNATURE_HEADER.toLowerCase()] ?? lowerHeaders['nomba-sig-value']
   const timestamp = lowerHeaders[TIMESTAMP_HEADER.toLowerCase()]
 
   if (!signature || !timestamp) {
     throw new NombaValidationError(
-      `Missing '${SIGNATURE_HEADER}' or '${TIMESTAMP_HEADER}' header on webhook request`
+      `Missing '${SIGNATURE_HEADER}' (or 'nomba-sig-value') or '${TIMESTAMP_HEADER}' header on webhook request`
     )
   }
 

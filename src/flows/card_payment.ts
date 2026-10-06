@@ -9,7 +9,13 @@ import type {
 
 export const RESPONSE_CODE_SUCCESS = '00'
 export const RESPONSE_CODE_OTP_REQUIRED = 'T0'
+/**
+ * 3D Secure required. The OpenAPI spec text writes this as `SO` (letter O)
+ * while the field examples imply `S0` (digit zero); Nomba docs use both
+ * spellings across pages, so both are accepted.
+ */
 export const RESPONSE_CODE_3DS_REQUIRED = 'S0'
+export const RESPONSE_CODE_3DS_REQUIRED_ALT = 'SO'
 
 export interface CardPaymentStep {
   raw:
@@ -42,7 +48,7 @@ function interpret(
     message: d['message'] as string | null ?? null,
     transactionId: transactionId ?? null,
     requiresOtp: responseCode === RESPONSE_CODE_OTP_REQUIRED,
-    requires3ds: responseCode === RESPONSE_CODE_3DS_REQUIRED,
+    requires3ds: responseCode === RESPONSE_CODE_3DS_REQUIRED || responseCode === RESPONSE_CODE_3DS_REQUIRED_ALT,
     secureAuthenticationData: (d['secureAuthenticationData'] as Record<string, unknown> | undefined) ?? null,
     completed: responseCode === RESPONSE_CODE_SUCCESS,
   }
@@ -98,7 +104,7 @@ export class CardPaymentFlow {
   }
 
   async confirm(): Promise<FetchCheckoutTransactionDetailsResponse> {
-    return this.charge.fetchCheckoutTransactionDetails(this.orderReference)
+    return this.charge.confirmTransactionReceipt(this.orderReference)
   }
 
   async cancel(options: { force?: boolean } = {}): Promise<CancelCheckoutTransactionResponse> {

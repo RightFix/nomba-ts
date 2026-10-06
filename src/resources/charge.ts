@@ -34,11 +34,30 @@ export class Charge {
     return this.client.post('/v1/checkout/resend-otp', request as unknown as Record<string, unknown>)
   }
 
-  async fetchCheckoutTransactionDetails(
+  /**
+   * Confirm a card/transfer payment after OTP or transfer.
+   * Docs name: "Fetch checkout transaction details"
+   * (`POST /v1/checkout/confirm-transaction-receipt`).
+   * Distinct from `GET /v1/checkout/transaction` (rich order details,
+   * production only) and `GET /v1/transactions/accounts/single`
+   * (sandbox + production status check) — use those for verification
+   * before delivering value.
+   */
+  async confirmTransactionReceipt(
     orderReference: string
   ): Promise<FetchCheckoutTransactionDetailsResponse> {
     validateBody('post', '/v1/checkout/confirm-transaction-receipt', { orderReference } as unknown as Record<string, unknown>)
     return this.client.post('/v1/checkout/confirm-transaction-receipt', { orderReference } as unknown as Record<string, unknown>)
+  }
+
+  /**
+   * @deprecated Use {@link confirmTransactionReceipt} instead. Kept so
+   * existing callers (including `CardPaymentFlow.confirm()`) keep working.
+   */
+  async fetchCheckoutTransactionDetails(
+    orderReference: string
+  ): Promise<FetchCheckoutTransactionDetailsResponse> {
+    return this.confirmTransactionReceipt(orderReference)
   }
 
   async cancelCheckoutTransaction(request: CancelCheckoutTransactionRequest): Promise<CancelCheckoutTransactionResponse> {

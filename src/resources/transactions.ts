@@ -79,6 +79,14 @@ export class Transactions {
     return this.client.get(`/v1/transactions/accounts/${subAccountId}/single`, options as unknown as Record<string, unknown>)
   }
 
+  /**
+   * Verify a checkout payment (sandbox + production).
+   * Docs: `GET /v1/transactions/accounts/single` with one of
+   * `orderReference` (your reference), `orderId` (Nomba-generated id
+   * returned as `orderReference` by create-order), `transactionRef`
+   * or `merchantTxRef`. Confirm `data.status === 'SUCCESS'` before
+   * delivering value. Use DRC credentials for DRC-collected payments.
+   */
   async fetchSingleTransactionOnParentAccount(
     options: { transactionRef?: string; merchantTxRef?: string; orderReference?: string; orderId?: string } = {}
   ): Promise<FetchSingleTransactionResponse> {

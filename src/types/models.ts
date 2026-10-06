@@ -218,6 +218,34 @@ export interface DataVendingResponse extends NombaResponse<{
   createdAt: string
 }> {}
 
+// Bill v2 models (docs: v1 bill endpoints are deprecated, use POST /v2/bill/*).
+// v2 data shape: { id, status, type, amount, timeCreated, ... } where
+// status SUCCESS (HTTP 200) = delivered, PENDING_BILLING (HTTP 201) =
+// still processing — wait for the webhook or requery.
+export interface V2BillTransaction {
+  id: string
+  status: string
+  type: string
+  amount: number
+  source?: string
+  sourceUserId?: string | null
+  customerBillerId?: string
+  productId?: string
+  meta?: Record<string, unknown>
+  userId?: string | null
+  timeCreated: string
+}
+
+export interface AirtimePurchaseV2Response extends NombaResponse<V2BillTransaction> {}
+
+export interface DataVendingV2Response extends NombaResponse<V2BillTransaction> {}
+
+export interface CableTvSubscriptionV2Response extends NombaResponse<V2BillTransaction> {}
+
+export interface ElectricityVendingV2Response extends NombaResponse<V2BillTransaction> {}
+
+export interface BettingVendingV2Response extends NombaResponse<V2BillTransaction> {}
+
 // Cable TV models
 export interface CableTvLookupRequest {
   customerId: string

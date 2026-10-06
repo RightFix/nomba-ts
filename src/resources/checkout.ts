@@ -50,6 +50,15 @@ export class Checkout {
     return this.client.get(`/v1/checkout/order/${orderReference}`)
   }
 
+  /**
+   * Fetch rich checkout order details (card/transfer/order metadata).
+   * Docs: `GET /v1/checkout/transaction?idType=&id=` — production only.
+   * For sandbox verification use
+   * `Transactions.fetchSingleTransactionOnParentAccount({ orderReference })`
+   * (`GET /v1/transactions/accounts/single`) and check `data.status`.
+   * Confirm with `transactionDetails.status === 'PAYMENT SUCCESSFUL'`
+   * (`statusCode` is the card-processor code and is empty on non-card rails).
+   */
   async fetchCheckoutTransactionDetails(
     options: { idType: 'ORDER_ID' | 'ORDER_REFERENCE'; id: string }
   ): Promise<FetchCheckoutTransactionDetailsResponse> {
