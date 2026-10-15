@@ -1,6 +1,6 @@
 {
   "name": "nomba-ts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Unofficial TypeScript SDK for the Nomba payments API",
   "license": "AGPL-3.0",
   "author": "Righteousness <righteousnessude@gmail.com>",
