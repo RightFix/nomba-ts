@@ -515,6 +515,13 @@ export interface AuthorizeTransferRequest {
   purposeOfPayment?: string
   narration?: string
   lockedExchangeRateId?: string
+  /**
+   * Optional unique key (max 128 chars) for this request. Resend the same
+   * key when retrying and the original transaction is returned with
+   * `idempotentReplay: true` instead of creating a second one. A key stays
+   * tied to its transaction permanently — use a new key for a new attempt.
+   */
+  idempotencyKey?: string
   bankAddress?: string
   bankCity?: string
   bankState?: string
@@ -534,6 +541,10 @@ export interface AuthorizeTransferResponse extends NombaResponse<{
   fee: string
   estimatedDelivery: string
   createdAt: string
+  /** The idempotencyKey sent with the request, echoed back. Empty if none was sent. */
+  idempotencyKey?: string
+  /** True when this response replays an earlier request with the same key — nothing new was created. */
+  idempotentReplay?: boolean
 }> {}
 
 export interface AuthorizeExchangeRequest {
