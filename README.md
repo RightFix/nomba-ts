@@ -60,13 +60,13 @@ Each group is available on the `Nomba` instance:
 | `accounts`           | `listAllAccounts`, `fetchAccountDetails`, `fetchTerminalsAssignedToAccount` |
 | `virtualAccounts`    | `createVirtualAccount`, `fetchVirtualAccount`, `filterVirtualAccounts` |
 | `checkout`           | `createOnlineCheckoutOrder`, `fetchCheckoutOrder`, `fetchCheckoutTransactionDetails` (production-only rich details) |
-| `charge`             | `submitCustomerCardDetails`, `submitCustomerPaymentOtp`, `confirmTransactionReceipt` |
+| `charge`             | `submitCustomerCardDetails`, `submitCustomerCardOtp`, `confirmTransactionReceipt` |
 | `transfers`          | `transfer`, `bulkTransfer`, `fetchTransfer`, `fetchTransfers` |
 | `terminals`          | `fetchTerminals`, `fetchTerminalDetails` |
 | `transactions`       | `fetchCreditDebitTransactionsOnParentAccount`, `filterParentAccountTransactions`, `fetchSingleTransactionOnParentAccount` (sandbox+prod verify), `confirmTransactionStatus` |
-| `airtimeData`        | `makeAirtimePurchaseViaParentAccount`, `vendDataViaParentAccount`, `fetchDataPlans` |
-| `cableTv`            | `cableTvLookup`, `cableTvSubscriptionViaParentAccount` |
-| `electricity`        | `fetchElectricityProviders`, `electricityCustomerLookup`, `vendElectricityViaParentAccount` |
+| `airtimeData`        | `makeAirtimePurchaseViaParentAccount`, `vendDataViaParentAccount` (needs `productId`), `fetchDataPlans` |
+| `cableTv`            | `cableTvLookup`, `fetchCableTvPlans`, `cableTvSubscriptionViaParentAccount` |
+| `electricity`        | `fetchElectricityProviders`, `electricityCustomerLookup` (name + address), `vendElectricityViaParentAccount` |
 | `betting`            | `fetchBettingProviders`, `bettingCustomerLookup`, `vendBettingViaParentAccount` |
 | `directDebits`       | `createDirectDebitMandate`, `debitMandate`, `getMandateStatus`, `getMandates` |
 | `globalCollections`  | `initiateMobileMoneyInflow`, `fetchCollectionTransaction`, `fetchDrcInflowProviders` |

@@ -50,16 +50,6 @@ export class Charge {
     return this.client.post('/v1/checkout/confirm-transaction-receipt', { orderReference } as unknown as Record<string, unknown>)
   }
 
-  /**
-   * @deprecated Use {@link confirmTransactionReceipt} instead. Kept so
-   * existing callers (including `CardPaymentFlow.confirm()`) keep working.
-   */
-  async fetchCheckoutTransactionDetails(
-    orderReference: string
-  ): Promise<FetchCheckoutTransactionDetailsResponse> {
-    return this.confirmTransactionReceipt(orderReference)
-  }
-
   async cancelCheckoutTransaction(request: CancelCheckoutTransactionRequest): Promise<CancelCheckoutTransactionResponse> {
     validateBody('post', '/v1/checkout/transaction/cancel', request as unknown as Record<string, unknown>)
     return this.client.post('/v1/checkout/transaction/cancel', request as unknown as Record<string, unknown>)

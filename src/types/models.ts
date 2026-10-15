@@ -49,6 +49,8 @@ export interface VirtualAccount {
   bankCode: string
   currency: string
   status: string
+  identifierType?: string
+  restrictInflowToAccountName?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -177,6 +179,8 @@ export interface ConfirmTransactionStatusResponse extends NombaResponse<{
 export interface DataPlan {
   amount: number
   plan: string
+  /** Unique plan identifier — pass as `productId` when purchasing. Required for new integrations. */
+  productId: string
 }
 
 export interface FetchDataPlansResponse extends NombaResponse<DataPlan[]> {}
@@ -189,18 +193,9 @@ export interface AirtimePurchaseRequest {
   senderName?: string
 }
 
-export interface AirtimePurchaseResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  phoneNumber: string
-  network: string
-  createdAt: string
-}> {}
-
 export interface DataVendingRequest {
-  amount: string
+  /** Exact plan identifier from Fetch Data Plans. Required — `amount` alone is deprecated upstream. */
+  productId: string
   phoneNumber: string
   network: string
   merchantTxRef: string
@@ -212,6 +207,8 @@ export interface DataVendingResponse extends NombaResponse<{
   reference: string
   status: string
   amount: string
+  productId?: string
+  plan?: string
   phoneNumber: string
   network: string
   dataPlan: string
@@ -269,16 +266,12 @@ export interface CableTvSubscriptionRequest {
   customerId: string
 }
 
-export interface CableTvSubscriptionResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  customerId: string
-  cableTvType: string
-  packageName: string
-  createdAt: string
-}> {}
+export interface CableTvPlan {
+  subScriptionType: string
+  amount: number
+}
+
+export interface FetchCableTvPlansResponse extends NombaResponse<CableTvPlan[]> {}
 
 // Electricity models
 export interface ElectricityProvider {
@@ -295,13 +288,9 @@ export interface ElectricityLookupRequest {
 }
 
 export interface ElectricityLookupResponse extends NombaResponse<{
-  customerName: string
-  customerId: string
-  disco: string
-  meterType: string
+  name: string
+  /** Returns `unknown` when the provider does not supply an address. */
   address: string
-  amount: string
-  currency: string
 }> {}
 
 export interface ElectricityVendingRequest {
@@ -312,19 +301,6 @@ export interface ElectricityVendingRequest {
   customerId: string
   meterType: string
 }
-
-export interface ElectricityVendingResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  customerId: string
-  disco: string
-  meterType: string
-  token: string
-  units: string
-  createdAt: string
-}> {}
 
 // Betting models
 export interface BettingProvider {
@@ -356,16 +332,6 @@ export interface BettingVendingRequest {
   amount: string
   customerId: string
 }
-
-export interface BettingVendingResponse extends NombaResponse<{
-  transactionId: string
-  reference: string
-  status: string
-  amount: string
-  customerId: string
-  bettingProvider: string
-  createdAt: string
-}> {}
 
 // Direct Debits models
 export interface DirectDebitMandate {
@@ -674,7 +640,6 @@ export interface UpdateVirtualAccountRequest {
   newAccountRef?: string
   accountName?: string
   expectedAmount?: number
-  callbackUrl?: string
 }
 
 export interface FilterVirtualAccountsRequest {

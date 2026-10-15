@@ -8,7 +8,6 @@ function stubCharge(submitResponse: unknown) {
     submitCustomerCardOtp: async () => submitResponse,
     resendCustomerOtp: async () => ({}),
     confirmTransactionReceipt: async () => ({}),
-    fetchCheckoutTransactionDetails: async () => ({}),
     cancelCheckoutTransaction: async () => ({}),
   } as unknown as Charge
 }

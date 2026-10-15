@@ -5,7 +5,6 @@ import type {
   BettingLookupRequest,
   BettingLookupResponse,
   BettingVendingRequest,
-  BettingVendingResponse,
   BettingVendingV2Response,
 } from '../types/models'
 
@@ -24,24 +23,12 @@ export class Betting {
     return this.client.get('/v1/bill/betting/lookup', request as unknown as Record<string, unknown>)
   }
 
-  /** @deprecated Docs: v1 is deprecated, use `vendBettingViaParentAccountV2` (`POST /v2/bill/betting`). */
-  async vendBettingViaParentAccount(request: BettingVendingRequest): Promise<BettingVendingResponse> {
-    validateBody('post', '/v1/bill/betting', request as unknown as Record<string, unknown>)
-    return this.client.post('/v1/bill/betting', request as unknown as Record<string, unknown>)
-  }
-
-  /** @deprecated Docs: v1 is deprecated, use `vendBettingViaSubAccountV2` (`POST /v2/bill/betting/{subAccountId}`). */
-  async vendBettingViaSubAccount(subAccountId: string, request: BettingVendingRequest): Promise<BettingVendingResponse> {
-    validateBody('post', '/v1/bill/betting/{subAccountId}', request as unknown as Record<string, unknown>)
-    return this.client.post(`/v1/bill/betting/${subAccountId}`, request as unknown as Record<string, unknown>)
-  }
-
-  async vendBettingViaParentAccountV2(request: BettingVendingRequest): Promise<BettingVendingV2Response> {
+  async vendBettingViaParentAccount(request: BettingVendingRequest): Promise<BettingVendingV2Response> {
     validateBody('post', '/v2/bill/betting', request as unknown as Record<string, unknown>)
     return this.client.post('/v2/bill/betting', request as unknown as Record<string, unknown>)
   }
 
-  async vendBettingViaSubAccountV2(subAccountId: string, request: BettingVendingRequest): Promise<BettingVendingV2Response> {
+  async vendBettingViaSubAccount(subAccountId: string, request: BettingVendingRequest): Promise<BettingVendingV2Response> {
     validateBody('post', '/v2/bill/betting/{subAccountId}', request as unknown as Record<string, unknown>)
     return this.client.post(`/v2/bill/betting/${subAccountId}`, request as unknown as Record<string, unknown>)
   }

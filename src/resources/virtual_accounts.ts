@@ -14,6 +14,10 @@ export interface CreateVirtualAccountRequest {
   accountRef: string
   accountName: string
   bvn?: string
+  /** 11-digit NIN. Can be sent on its own or alongside `bvn`. */
+  nin?: string
+  /** Reject inflows whose sender name does not match the account name. */
+  restrictInflowToAccountName?: boolean
   expiryDate?: string
   expectedAmount?: number
 }
@@ -22,6 +26,10 @@ export interface CreateVirtualAccountForSubAccountRequest {
   accountRef: string
   accountName: string
   bvn?: string
+  /** 11-digit NIN. Can be sent on its own or alongside `bvn`. */
+  nin?: string
+  /** Reject inflows whose sender name does not match the account name. */
+  restrictInflowToAccountName?: boolean
   expiryDate?: string
   expectedAmount?: number
 }
