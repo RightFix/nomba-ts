@@ -63,19 +63,7 @@ export interface FilterVirtualAccountsResponse extends NombaResponse<PaginatedRe
 
 export interface FetchVirtualAccountTransactionsResponse extends NombaResponse<PaginatedResponse<Transaction>> {}
 
-// Checkout models
-export interface CreateOnlineCheckoutOrderRequest {
-  orderReference: string
-  amount: string
-  currency: string
-  customerEmail: string
-  customerName: string
-  redirectUrl: string
-  paymentMethods: string[]
-  metadata?: Record<string, unknown>
-  description?: string
-  expiresAt?: string
-}
+
 
 export interface FetchCheckoutOrderResponse extends NombaResponse<{
   orderReference: string
@@ -505,7 +493,6 @@ export interface AuthorizeTransferRequest {
   receiverName: string
   sourceCountryIsoCode: string
   destinationCountryIsoCode: string
-  authCode: string
   paymentMethod: string
   accountType: string
   accountNumber?: string
@@ -555,7 +542,6 @@ export interface AuthorizeExchangeRequest {
   receiverName: string
   sourceCountryIsoCode: string
   destinationCountryIsoCode: string
-  authCode: string
   narration?: string
   lockedExchangeRateId?: string
 }
@@ -683,7 +669,6 @@ export interface CreateOnlineCheckoutOrderRequest {
     amount: number
     currency: string
     accountId?: string
-    allowedPaymentMethods?: string[]
     splitRequest?: {
       splitType: 'PERCENTAGE' | 'AMOUNT'
       splitList: Array<{
