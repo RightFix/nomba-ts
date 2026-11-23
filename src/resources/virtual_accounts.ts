@@ -8,6 +8,8 @@ import type {
   UpdateVirtualAccountRequest,
   FetchVirtualAccountTransactionsResponse,
   ExpireVirtualAccountResponse,
+  SimulateInflowRequest,
+  SimulateInflowResponse,
 } from '../types/models'
 
 export interface CreateVirtualAccountRequest {
@@ -18,6 +20,10 @@ export interface CreateVirtualAccountRequest {
   nin?: string
   /** Reject inflows whose sender name does not match the account name. */
   restrictInflowToAccountName?: boolean
+  /** URL to receive payment_success and payment_failed webhook events for inflows into this virtual account. */
+  callbackUrl?: string
+  /** Sandbox only. SIMULATED (default for NGN) or LIVE. */
+  mode?: 'SIMULATED' | 'LIVE'
   expiryDate?: string
   expectedAmount?: number
 }
@@ -30,6 +36,10 @@ export interface CreateVirtualAccountForSubAccountRequest {
   nin?: string
   /** Reject inflows whose sender name does not match the account name. */
   restrictInflowToAccountName?: boolean
+  /** URL to receive payment_success and payment_failed webhook events for inflows into this virtual account. */
+  callbackUrl?: string
+  /** Sandbox only. SIMULATED (default for NGN) or LIVE. */
+  mode?: 'SIMULATED' | 'LIVE'
   expiryDate?: string
   expectedAmount?: number
 }
@@ -78,5 +88,11 @@ export class VirtualAccounts {
     cursor?: string
   ): Promise<FetchVirtualAccountTransactionsResponse> {
     return this.client.get(`/v1/accounts/virtual/${identifier}/transactions`, { limit, cursor } as unknown as Record<string, unknown>)
+  }
+
+  /** Sandbox only. Simulates a bank transfer into a SIMULATED sandbox virtual account. */
+  async simulateInflow(identifier: string, request: SimulateInflowRequest): Promise<SimulateInflowResponse> {
+    validateBody('post', '/v1/accounts/virtual/{identifier}/simulate-inflow', request as unknown as Record<string, unknown>)
+    return this.client.post(`/v1/accounts/virtual/${identifier}/simulate-inflow`, request as unknown as Record<string, unknown>)
   }
 }

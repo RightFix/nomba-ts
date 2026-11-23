@@ -51,6 +51,7 @@ export interface VirtualAccount {
   status: string
   identifierType?: string
   restrictInflowToAccountName?: boolean
+  mode?: 'SIMULATED' | 'LIVE'
   createdAt: string
   updatedAt: string
 }
@@ -659,6 +660,27 @@ export interface ExpireVirtualAccountResponse extends NombaResponse<{
   expired: boolean
 }> {}
 
+export interface SimulateInflowRequest {
+  amount: string
+  senderAccountName: string
+  senderAccountNumber?: string
+  senderBankCode?: string
+  narration?: string
+}
+
+export interface SimulateInflowData {
+  status: 'SUCCESS' | 'REJECTED'
+  responseCode: string
+  reason?: string
+  transactionRef?: string
+  sessionId?: string
+  accountNumber?: string
+  accountRef?: string
+  amount?: string
+}
+
+export interface SimulateInflowResponse extends NombaResponse<SimulateInflowData> {}
+
 // Extended Checkout models
 export interface CreateOnlineCheckoutOrderRequest {
   order: {
@@ -703,53 +725,67 @@ export interface FetchCheckoutOrderResponse extends NombaResponse<{
 }> {}
 
 export interface ChargeTokenizedCardRequest {
-  orderReference: string
-  amount: number
-  currency: string
-  cardToken: string
-  customerEmail: string
-  customerName: string
+  order: {
+    orderReference: string
+    customerId: string
+    callbackUrl: string
+    customerEmail: string
+    amount: number
+    currency: string
+    accountId?: string
+    splitRequest?: {
+      splitType: 'PERCENTAGE' | 'AMOUNT'
+      splitList: Array<{ accountId: string; value: number }>
+    }
+  }
+  tokenKey: string
 }
 
 export interface ChargeTokenizedCardResponse extends NombaResponse<{
-  transactionId: string
-  orderReference: string
-  amount: string
-  currency: string
-  status: string
-  paymentMethod: string
-  customerEmail: string
-  customerName: string
-  paidAt?: string
-  createdAt: string
+  status: boolean
+  message: string
+  orderId?: string
+  orderReference?: string
+  otpRequired?: boolean
+  transactionId?: string
 }> {}
 
-export interface TokenizedCard {
-  cardToken: string
-  cardPan: string
-  cardType: string
-  cardBank: string
-  cardCurrency: string
+export interface TokenizedCardData {
+  tokenKey: string
   customerEmail: string
-  createdAt: string
+  cardType: string
+  cardPan: string
+  tokenExpiryDate: string
 }
 
-export interface ListTokenizedCardsResponse extends NombaResponse<TokenizedCard[]> {}
+/** @deprecated Use TokenizedCardData */
+export type TokenizedCard = TokenizedCardData
+
+export interface ListTokenizedCardsResponse extends NombaResponse<{
+  hasNextPage?: boolean
+  nextPage?: number
+  tokenizedCardDataList?: TokenizedCardData[]
+}> {}
 
 export interface UpdateTokenizedCardRequest {
-  cardToken: string
-  cardPan?: string
-  cardExpiry?: string
+  tokenKey: string
+  currentEmailAddress: string
+  newEmailAddress: string
 }
 
-export interface UpdateTokenizedCardResponse extends NombaResponse<TokenizedCard> {}
+export interface UpdateTokenizedCardResponse extends NombaResponse<{
+  status: boolean
+  message: string
+  tokenizedCardData?: TokenizedCardData
+}> {}
 
 export interface DeleteTokenizedCardRequest {
-  cardToken: string
+  tokenKey: string
 }
 
 export interface DeleteTokenizedCardResponse extends NombaResponse<{
-  deleted: boolean
+  status: boolean
+  message: string
 }> {}
 
 export interface RefundCheckoutRequest {
@@ -847,7 +883,9 @@ export interface SubmitUserOtpResponse extends NombaResponse<{
   message: string
 }> {}
 
-export interface GetUserSavedCardsResponse extends NombaResponse<TokenizedCard[]> {}
+export interface GetUserSavedCardsResponse extends NombaResponse<{
+  tokenizedCardData?: TokenizedCardData[]
+}> {}
 
 export interface FetchCheckoutTransactionDetailsResponse extends NombaResponse<{
   transactionId: string

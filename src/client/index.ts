@@ -367,8 +367,8 @@ export class NombaClient {
     return this.ensureSuccess(response.data, `PUT ${path}`, response.status)
   }
 
-  async delete<T = unknown>(path: string, params?: Record<string, unknown>): Promise<T> {
-    const response = await this.axios.delete<T>(path, { params })
+  async delete<T = unknown>(path: string, body?: unknown, params?: Record<string, unknown>): Promise<T> {
+    const response = await this.axios.delete<T>(path, { data: body, params })
     return this.ensureSuccess(response.data, `DELETE ${path}`, response.status)
   }
 

@@ -9,7 +9,7 @@ const BASE_TRANSFER = {
   receiverName: 'John Cena',
   sourceCountryIsoCode: 'CD',
   destinationCountryIsoCode: 'CD',
-  authCode: 'auth-1',
+  // authCode removed per live spec
   paymentMethod: 'MobileMoney',
   accountType: 'INDIVIDUAL',
   accountNumber: '0903086112',
